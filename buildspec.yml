@@ -3,19 +3,35 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.8
+      nodejs: 14  # Specify the Node.js version you need
     commands:
-      # Install Terraform
-      - curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
-      - sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
-      - sudo apt-get update && sudo apt-get install terraform -y
-
-  pre_build:
-    commands:
-      # Print Terraform version
-      - terraform --version
+      - npm install -g npm  # Install or update npm globally
+      # Add any other installation steps you need (e.g., dependencies, tools)
 
   build:
     commands:
+      # Install Terraform (adjust the version as needed)
+      - curl -O https://releases.hashicorp.com/terraform/0.14.11/terraform_0.14.11_linux_amd64.zip
+      - unzip terraform_0.14.11_linux_amd64.zip
+      - mv terraform /usr/local/bin/
+      - terraform --version  # Verify Terraform installation
+
       # Initialize Terraform
       - terraform init
+      
+      # Validate Terraform configuration
+      - terraform validate
+      
+      # Create Terraform plan
+      - terraform plan -out=tfplan
+
+      # Apply Terraform plan (auto-approve)
+      - terraform apply -auto-approve tfplan
+
+# Add post-build phases if needed (e.g., deployment)
+
+artifacts:
+  files:
+    - '**/*'  # Include all files in the build output
+
+# Add additional configuration as required
