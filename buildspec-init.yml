@@ -9,29 +9,13 @@ phases:
       - curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
       - sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
       - sudo apt-get update && sudo apt-get install terraform -y
-      
+
   pre_build:
     commands:
       # Print Terraform version
       - terraform --version
-      
+
   build:
     commands:
-      # Initialize Terraform (if not already initialized)
+      # Initialize Terraform
       - terraform init
-      
-      # Validate Terraform configuration
-      - terraform validate
-      
-      # Create Terraform plan
-      - terraform plan -out=tfplan
-
-  post_build:
-    commands:
-      # Save Terraform output files as artifacts
-      - mkdir -p artifacts
-      - cp tfplan artifacts/
-
-artifacts:
-  files:
-    - artifacts/*
